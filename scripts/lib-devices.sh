@@ -85,9 +85,6 @@ function mount_device() {
 		USB_DEVICES_OLD=""
 		while [ ${RETRY_TO_MOUNT} = true ]; do
 
-			# force to re-scan usb-devices
-			sudo udevadm trigger
-
 			# get all devices starting with "PATH=\"...
 			unset USB_DEVICES
 			readarray USB_DEVICES <<< "$(sudo lsblk -p -P -o PATH,MOUNTPOINT,UUID,FSTYPE | grep "^PATH=\"/dev/${const_STORAGE_DEV_MASK}")"
