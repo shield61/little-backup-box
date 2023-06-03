@@ -416,6 +416,9 @@ sudo a2enmod proxy_http
 sudo a2dissite 000-default
 sudo a2ensite little-backup-box
 
+sudo mkdir -p /etc/systemd/system/apache2.service.d
+yes | sudo cp -f "${INSTALLER_DIR}/etc_systemd_system_apache2.service.d_config_override.conf" "/etc/systemd/system/apache2.service.d/config_override.conf"
+
 sudo systemctl reload apache2
 
 # Configure Samba
