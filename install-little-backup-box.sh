@@ -44,6 +44,41 @@ fi
 USER_WWW_DATA="www-data"
 USER_SAMBA="lbb"
 
+# installation parameters
+_SOURCEURL="https://raw.githubusercontent.com/outdoorbits/little-backup-box/main/install-little-backup-box.sh"
+_SOURCEBRANCH="main"
+_SOURCEREPO="little-backup-box"
+_SOURCEOWNER="outdoorbits"
+_SOURCESCRIPT="install.sh"
+function getInstallCommand() {
+    OIFS=$IFS
+    IN=$1
+    #IN="$(tail -n -1 "$HOME/.bash_history")"
+    #IN="curl -sSL https://raw.githubusercontent.com/shield61/little-backup-box/development/install-little-backup-box.sh | bash  2> install-error.log"
+    IFS=' ' read -r -a CMDLINE <<< "$IN"
+    for x in "${CMDLINE[@]}"
+    do
+        if [[ "$x" = *"github"* ]] ; then
+            _SOURCEURL=$x
+            IFS='/' read -r -a URL <<< "$x"
+            _SOURCESCRIPT=${URL[-1]}
+            _SOURCEBRANCH=${URL[-2]}
+            _SOURCEREPO=${URL[-3]}
+            _SOURCEOWNER=${URL[-4]}
+        fi
+        continue
+    done
+    IFS=$OIFS
+}
+
+getInstallCommand "$1"
+
+echo "URL:" "${_SOURCEURL}"
+echo "SCRIPTNAME:" "${_SOURCESCRIPT}"
+echo "BRANCH:" "${_SOURCEBRANCH}"
+echo "REPOSITORY:" "${_SOURCEREPO}"
+echo "OWNER:" "${_SOURCEOWNER}"
+
 # change into actual user-dir
 cd
 
@@ -75,6 +110,9 @@ else
 		install -y -q --allow-downgrades --allow-remove-essential --allow-change-held-packages \
 		dialog
 fi
+
+printf "Installer directory is: %s\n" "$INSTALLER_DIR"
+printf "Script mode is: %s\n" "$SCRIPT_MODE"
 
 # Do all user-interactions
 
@@ -164,13 +202,14 @@ sudo raspi-config nonint do_boot_wait 1 # wait for network on boot: disable
 
 # Clone Little Backup Box
 echo "Cloning Little Backup Box"
-cd
+cd || exit
 
-sudo rm -R ${INSTALLER_DIR}
-git clone https://github.com/outdoorbits/little-backup-box.git
-GIT_CLONE=$?
-if [ "${GIT_CLONE}" -gt 0 ]; then
-	echo "Cloning little-backup-box from github.com failed. Please try again later."
+sudo rm -R "${INSTALLER_DIR}"
+_GITCMD="git clone -b $_SOURCEBRANCH --single-branch https://github.com/$_SOURCEOWNER/little-backup-box.git"
+${_GITCMD}
+GIT_RESULT=$?
+if [ "${GIT_RESULT}" -gt 0 ]; then
+	echo "Cloning branch $_SOURCEBRANCH of $_SOURCEOWNER/little-backup-box.git from github.com failed. Please try again later."
 	exit 0
 fi
 
@@ -185,7 +224,6 @@ if [ "${SCRIPT_MODE}" = "update" ]; then
 
 	sudo rm -R ${const_WEB_ROOT_LBB}/*
 fi
-
 # install little-backup-box-files
 sudo mkdir -p "${const_WEB_ROOT_LBB}"
 yes | sudo cp -Rf "${INSTALLER_DIR}/scripts/"* "${const_WEB_ROOT_LBB}/"
@@ -200,6 +238,12 @@ if [ "${SCRIPT_MODE}" = "update" ]; then
 	echo "Loading old settings from ${CONFIG}"
 	source "${CONFIG}"
 fi
+
+# Write new URL to update from into config
+## append new line to config-file
+echo -e '' | sudo tee -a "${CONFIG}"
+sudo sed -i '/conf_INSTALLER_URL=/d' "${CONFIG}"
+echo "conf_INSTALLER_URL=\"${_SOURCEURL}\"" | sudo tee -a "${CONFIG}"
 
 # Install rclone
 curl https://rclone.org/install.sh | sudo bash
