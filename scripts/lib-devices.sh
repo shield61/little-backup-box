@@ -146,7 +146,7 @@ function mount_device() {
 			fi
 
 			if [ ${RETRY_TO_MOUNT} = true ]; then
-				sleep 1
+				sleep 3
 			fi
 
 		done
