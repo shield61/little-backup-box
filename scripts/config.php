@@ -10,6 +10,7 @@
 	$constants = parse_ini_file("constants.sh", false);
 
 	$theme = $config["conf_THEME"];
+	$installer_url = $config["conf_INSTALLER_URL"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include("sub-popup.php");
@@ -114,6 +115,7 @@ function write_config() {
 	global $WIFI_COUNTRY;
 	global $constants;
 	global $vpn_types;
+	global $installer_url;
 
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
@@ -167,6 +169,8 @@ function write_config() {
 			popup(L::config_alert_password_change_after_reboot_set,true);
 		}
 	}
+
+	$current
 
 	$CONFIGFILE = "$WORKING_DIR/config.cfg";
 	$config_file_handle = fopen($CONFIGFILE, "w");
@@ -232,7 +236,7 @@ conf_WIFI_COUNTRY='$conf_WIFI_COUNTRY'
 conf_VPN_TYPE_RSYNC='$conf_VPN_TYPE_RSYNC'
 conf_VPN_TYPE_CLOUD='$conf_VPN_TYPE_CLOUD'
 conf_VPN_TIMEOUT='$conf_VPN_TIMEOUT'
-conf_INSTALLER_URL='Lars was here'
+conf_INSTALLER_URL='$installer_url'
 $conf_PASSWORD_LINE
 
 CONFIGDATA;
