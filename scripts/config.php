@@ -170,8 +170,6 @@ function write_config() {
 		}
 	}
 
-	$current
-
 	$CONFIGFILE = "$WORKING_DIR/config.cfg";
 	$config_file_handle = fopen($CONFIGFILE, "w");
 
