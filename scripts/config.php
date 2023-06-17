@@ -135,6 +135,7 @@ function write_config() {
 	$conf_VIEW_WRITE_RATING_EXIF				= isset($conf_VIEW_WRITE_RATING_EXIF)?"true":"false";
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
+	$conf_INSTALLER_URL=$config["conf_INSTALLER_URL"]
 
 	if ($conf_MAIL_PASSWORD != '') {
 		if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
