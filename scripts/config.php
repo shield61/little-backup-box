@@ -341,6 +341,11 @@ function upload_settings() {
 						exec ("sudo mv '" . $targetdir . "/bg-images/'* '" . $constants['const_BACKGROUND_IMAGES_DIR'] . "/'");
 						exec ("sudo chown www-data:www-data '" . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
 					}
+					
+					# Replace INSTALLER-URL with current one or add if missing
+					exec ("echo -e '' | sudo tee -a " . $CONFIG);
+					exec ("sudo sed -i '/conf_INSTALLER_URL=/d' " . $CONFIG);
+					exec ("echo 'conf_INSTALLER_URL=\"" . $_SOURCEURL . "\"' | sudo tee -a " . $CONFIG);
 
 					# Feedback files in place
 					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
