@@ -349,7 +349,7 @@ function upload_settings() {
 					# TODO: Use correct variables
 					exec ("echo -e '' | sudo tee -a " . $targetdir . "/config.cfg" );
 					exec ("sudo sed -i '/conf_INSTALLER_URL=/d' " . $targetdir . "/config.cfg" );
-					exec ("echo 'conf_INSTALLER_URL=\"" . $config["conf_INSTALLER_URL"] . "\"' | sudo tee -a " $targetdir . "/config.cfg" );
+					exec ("echo 'conf_INSTALLER_URL=\"" . $config["conf_INSTALLER_URL"] . "\"' | sudo tee -a " . $targetdir . "/config.cfg" );
 
 					# Feedback files in place
 					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
