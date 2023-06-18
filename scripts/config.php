@@ -346,9 +346,10 @@ function upload_settings() {
 					}
 					
 					# Replace INSTALLER-URL with current one or add if missing
-					exec ("echo -e '' | sudo tee -a " . $CONFIG);
-					exec ("sudo sed -i '/conf_INSTALLER_URL=/d' " . $CONFIG);
-					exec ("echo 'conf_INSTALLER_URL=\"" . $_SOURCEURL . "\"' | sudo tee -a " . $CONFIG);
+					# TODO: Use correct variables
+					exec ("echo -e '' | sudo tee -a " . $targetdir . "/config.cfg" );
+					exec ("sudo sed -i '/conf_INSTALLER_URL=/d' " . $targetdir . "/config.cfg" );
+					exec ("echo 'conf_INSTALLER_URL=\"" . $config["conf_INSTALLER_URL"] . "\"' | sudo tee -a " $targetdir . "/config.cfg" );
 
 					# Feedback files in place
 					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
