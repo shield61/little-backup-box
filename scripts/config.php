@@ -10,6 +10,7 @@
 	$constants = parse_ini_file("constants.sh", false);
 
 	$theme = $config["conf_THEME"];
+	$installer_url = $config["conf_INSTALLER_URL"];
 	$background = $config["conf_BACKGROUND_IMAGE"] == ""?"":"background='" . $constants["const_BACKGROUND_IMAGES_DIR"] . "/" . $config["conf_BACKGROUND_IMAGE"] . "'";
 
 	include("sub-popup.php");
@@ -114,6 +115,7 @@ function write_config() {
 	global $WIFI_COUNTRY;
 	global $constants;
 	global $vpn_types;
+	global $installer_url;
 
 	list($conf_BACKUP_DEFAULT_SOURCE,$conf_BACKUP_DEFAULT_TARGET)=explode(" ",$BACKUP_MODE,2);
 	list($conf_BACKUP_DEFAULT_SOURCE2,$conf_BACKUP_DEFAULT_TARGET2)=explode(" ",$BACKUP_MODE_2,2);
@@ -135,6 +137,7 @@ function write_config() {
 	$conf_VIEW_WRITE_RATING_EXIF				= isset($conf_VIEW_WRITE_RATING_EXIF)?"true":"false";
 
 	$conf_PASSWORD_LINE="conf_PASSWORD=\"$conf_PASSWORD_OLD\"";
+	$conf_INSTALLER_URL=$config["conf_INSTALLER_URL"];
 
 	if ($conf_MAIL_PASSWORD != '') {
 		if (! check_new_password (L::config_alert_password_mail_header, $conf_MAIL_PASSWORD, $conf_MAIL_PASSWORD)) {
@@ -231,7 +234,7 @@ conf_WIFI_COUNTRY='$conf_WIFI_COUNTRY'
 conf_VPN_TYPE_RSYNC='$conf_VPN_TYPE_RSYNC'
 conf_VPN_TYPE_CLOUD='$conf_VPN_TYPE_CLOUD'
 conf_VPN_TIMEOUT='$conf_VPN_TIMEOUT'
-conf_INSTALLER_URL='$conf_INSTALLER_URL'
+conf_INSTALLER_URL='$installer_url'
 $conf_PASSWORD_LINE
 
 CONFIGDATA;
@@ -341,6 +344,11 @@ function upload_settings() {
 						exec ("sudo mv '" . $targetdir . "/bg-images/'* '" . $constants['const_BACKGROUND_IMAGES_DIR'] . "/'");
 						exec ("sudo chown www-data:www-data '" . $constants['const_BACKGROUND_IMAGES_DIR'] ."/'*");
 					}
+					
+					# Replace INSTALLER-URL with current one or add if missing
+					exec ("echo -e '' | sudo tee -a " . $constants["const_WEB_ROOT_LBB"] . "/config.cfg" );
+					exec ("sudo sed -i '/conf_INSTALLER_URL=/d' " . $constants["const_WEB_ROOT_LBB"] . "/config.cfg" );
+					exec ("echo 'conf_INSTALLER_URL=\"" . $config["conf_INSTALLER_URL"] . "\"' | sudo tee -a " . $constants["const_WEB_ROOT_LBB"] . "/config.cfg" );
 
 					# Feedback files in place
 					popup(L::config_alert_settings_upload_success. " ". $Files_Copied,true);
